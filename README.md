@@ -2,6 +2,8 @@
 
 A local, privacy-first Retrieval-Augmented Generation assistant. Upload `.txt` documents, ask natural-language questions, and get grounded answers with source citations — all running on your machine with no cloud APIs.
 
+### Demo
+
 https://github.com/user-attachments/assets/83f54497-b39c-4f0d-92d2-569b3c53537c
 
 ## Features
@@ -9,6 +11,7 @@ https://github.com/user-attachments/assets/83f54497-b39c-4f0d-92d2-569b3c53537c
 - **Document ingestion** — upload text files that are chunked, embedded, and stored in a persistent vector database.
 - **Namespace isolation** — each workspace (e.g. `movies`, `mit`) gets its own Chroma collection so answers never leak across topics.
 - **Grounded answers** — top-3 retrieved chunks are returned as context with source + character-span citations.
+- **Deterministic post-processing** for structured queries — e.g. listing words starting with a letter, reducing hallucination vs pure LLM answers.
 - **Reset workspace** — clear a single namespace without touching others.
 - **Evaluation script** — measure retrieval hit-rate against a question set.
 
@@ -56,8 +59,11 @@ data/sample_docs/       # Sample .txt files (alice.txt, mit_license.txt)
 - **Ollama** installed and running with the `nomic-embed-text` model:
   ```bash
   ollama pull nomic-embed-text
-  ollama serve            # runs on localhost:11434
+
+  # Verify Ollama is running:
+  curl http://127.0.0.1:11434/api/version
   ```
+  > If not running, start it via your system service or `ollama serve`.
 
 ### Install & Run
 
@@ -93,6 +99,12 @@ curl -X POST http://127.0.0.1:8000/ask \
   -H "Content-Type: application/json" \
   -d '{"question":"What does the MIT license allow?","namespace":"mit","top_k":5}'
 ```
+
+## Limitations / Next Improvements
+
+- Currently supports `.txt` files only — PDF ingestion can be added via `pypdf`.
+- Answers are context-grounded; optional upgrade: generate summaries via Ollama chat while preserving citations.
+- Evaluation script is lightweight; can expand with labeled QA sets and retrieval metrics.
 
 ## License
 
